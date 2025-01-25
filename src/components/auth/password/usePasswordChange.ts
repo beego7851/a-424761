@@ -2,11 +2,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { PasswordFormValues } from "./types";
+import { PasswordFormValues, PasswordChangeData } from "./types";
 
-interface PasswordChangeData {
+interface PasswordChangeResult {
   success: boolean;
-  message?: string;
   error?: string;
   code?: string;
   details?: {
@@ -38,7 +37,7 @@ export const usePasswordChange = (memberNumber: string, onSuccess?: () => void) 
         retryCount
       });
 
-      const { data: rpcData, error } = resetToken 
+      const { data: rpcResponse, error } = resetToken 
         ? await supabase.rpc('handle_password_reset_with_token', {
             token_value: resetToken,
             new_password: values.newPassword,
@@ -64,7 +63,7 @@ export const usePasswordChange = (memberNumber: string, onSuccess?: () => void) 
           });
 
       console.log("[PasswordChange] RPC Response:", {
-        hasData: !!rpcData,
+        hasData: !!rpcResponse,
         hasError: !!error,
         errorMessage: error?.message
       });
@@ -84,12 +83,14 @@ export const usePasswordChange = (memberNumber: string, onSuccess?: () => void) 
         };
       }
 
-      if (!rpcData || !rpcData.success) {
+      const typedResponse = rpcResponse as PasswordChangeResult;
+
+      if (!typedResponse || !typedResponse.success) {
         toast.dismiss(toastId);
         return {
           success: false,
-          error: rpcData?.message || "Failed to change password",
-          code: rpcData?.code
+          error: typedResponse?.error || "Failed to change password",
+          code: typedResponse?.code
         };
       }
 
@@ -104,7 +105,11 @@ export const usePasswordChange = (memberNumber: string, onSuccess?: () => void) 
         navigate('/login');
       }
 
-      return rpcData as PasswordChangeData;
+      return {
+        success: true,
+        message: "Password changed successfully",
+        code: "SUCCESS"
+      };
 
     } catch (error: any) {
       console.error("[PasswordChange] Unexpected error:", error);

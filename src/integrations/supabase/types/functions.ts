@@ -115,4 +115,11 @@ export type DatabaseFunctions = {
     };
     Returns: Json;
   };
+  generate_magic_link_token: {
+    Args: {
+      p_member_number: string;
+      p_token_type?: 'password_reset' | 'email_verification';
+    };
+    Returns: string;
+  };
 };

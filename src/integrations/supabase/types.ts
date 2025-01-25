@@ -1275,6 +1275,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      generate_magic_link_token: {
+        Args: {
+          p_member_number: string
+          p_token_type?: Database["public"]["Enums"]["token_type"]
+        }
+        Returns: string
+      }
       generate_password_reset_token: {
         Args: {
           p_member_number: string

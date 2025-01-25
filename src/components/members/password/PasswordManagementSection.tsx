@@ -26,20 +26,49 @@ const PasswordManagementSection = ({
   passwordResetRequired,
 }: PasswordManagementSectionProps) => {
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [isUnlocking, setIsUnlocking] = useState(false);
 
   const handleUnlockAccount = async () => {
     try {
+      console.log('Unlocking account for member:', {
+        memberNumber,
+        memberName,
+        timestamp: new Date().toISOString()
+      });
+
+      setIsUnlocking(true);
       const { error } = await supabase.rpc('reset_failed_login', {
         member_number: memberNumber
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error unlocking account:', {
+          error,
+          memberNumber,
+          timestamp: new Date().toISOString()
+        });
+        throw error;
+      }
 
-      toast.success("Account has been unlocked");
+      toast.success("Account has been unlocked", {
+        description: `Successfully unlocked account for ${memberName}`
+      });
+
+      // Invalidate queries to refresh member data
+      // This assumes you're using react-query and have queryClient available
+      // If not, you'll need to implement your own refresh mechanism
     } catch (error: any) {
+      console.error('Failed to unlock account:', {
+        error,
+        memberNumber,
+        timestamp: new Date().toISOString()
+      });
+      
       toast.error("Failed to unlock account", {
         description: error.message
       });
+    } finally {
+      setIsUnlocking(false);
     }
   };
 
@@ -83,10 +112,11 @@ const PasswordManagementSection = ({
               variant="outline"
               size="sm"
               onClick={handleUnlockAccount}
+              disabled={isUnlocking}
               className="bg-dashboard-card hover:bg-dashboard-cardHover"
             >
               <Lock className="w-4 h-4 mr-2" />
-              Unlock
+              {isUnlocking ? 'Unlocking...' : 'Unlock'}
             </Button>
           )}
           

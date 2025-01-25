@@ -710,6 +710,7 @@ export type Database = {
           is_reset: boolean | null
           reason: string | null
           stack_trace: string | null
+          success: boolean | null
           user_agent: string | null
           user_id: string | null
         }
@@ -725,6 +726,7 @@ export type Database = {
           is_reset?: boolean | null
           reason?: string | null
           stack_trace?: string | null
+          success?: boolean | null
           user_agent?: string | null
           user_id?: string | null
         }
@@ -740,6 +742,7 @@ export type Database = {
           is_reset?: boolean | null
           reason?: string | null
           stack_trace?: string | null
+          success?: boolean | null
           user_agent?: string | null
           user_id?: string | null
         }

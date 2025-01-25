@@ -83,7 +83,7 @@ export const usePasswordChange = (memberNumber: string, onSuccess?: () => void) 
         };
       }
 
-      const typedResponse = rpcResponse as PasswordChangeResult;
+      const typedResponse = rpcResponse as unknown as PasswordChangeResult;
 
       if (!typedResponse || !typedResponse.success) {
         toast.dismiss(toastId);

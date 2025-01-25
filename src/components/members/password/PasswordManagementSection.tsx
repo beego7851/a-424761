@@ -5,6 +5,7 @@ import { Lock, LockKeyhole, Key, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPasswordResetDialog from '@/components/auth/AdminPasswordResetDialog';
+import MagicLinkButton from '@/components/auth/password/MagicLinkButton';
 
 interface PasswordManagementSectionProps {
   memberId: string;
@@ -137,6 +138,11 @@ const PasswordManagementSection = ({
           Failed login attempts: {failedLoginAttempts}
         </p>
       )}
+
+      <MagicLinkButton 
+        memberNumber={memberNumber}
+        memberName={memberName}
+      />
 
       <AdminPasswordResetDialog
         open={showResetDialog}

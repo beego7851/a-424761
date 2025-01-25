@@ -81,7 +81,16 @@ export const PasswordForm = ({
           }
         } else {
           console.error("[PasswordForm] Password change failed:", result?.error);
-          toast.error(result?.error || "Failed to update password");
+          let errorMessage = result?.error;
+          
+          // Handle specific error codes
+          if (result?.code === 'INVALID_CURRENT_PASSWORD') {
+            errorMessage = "Current password is incorrect";
+          } else if (result?.code === 'MEMBER_NOT_FOUND') {
+            errorMessage = "Member not found";
+          }
+          
+          toast.error(errorMessage || "Failed to update password");
           if (onError) {
             onError(result?.error);
           }
@@ -146,12 +155,12 @@ export const PasswordForm = ({
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Resetting...
+                Updating...
               </>
             ) : (
               <>
                 <Lock className="w-4 h-4" />
-                Reset Password
+                Update Password
               </>
             )}
           </Button>

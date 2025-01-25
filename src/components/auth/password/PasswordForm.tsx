@@ -8,6 +8,7 @@ import { Lock, Loader2 } from "lucide-react";
 import { PasswordInput } from "./PasswordInput";
 import { usePasswordChange } from "./usePasswordChange";
 import { PasswordFormValues } from "./types";
+import { toast } from "sonner";
 
 const passwordSchema = z.object({
   currentPassword: z.string().optional(),
@@ -69,16 +70,20 @@ export const PasswordForm = ({
       if (onSubmit) {
         await onSubmit(values);
       } else {
-        const result = await handlePasswordChange({
-          ...values,
-          resetToken
-        });
+        const result = await handlePasswordChange(values, resetToken);
         
-        if (result && result.success) {
+        if (result?.success) {
           console.log("[PasswordForm] Password change successful");
           form.reset();
+          toast.success("Password updated successfully");
           if (onSuccess) {
             onSuccess();
+          }
+        } else {
+          console.error("[PasswordForm] Password change failed:", result?.error);
+          toast.error(result?.error || "Failed to update password");
+          if (onError) {
+            onError(result?.error);
           }
         }
       }
